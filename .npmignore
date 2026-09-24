@@ -1,0 +1,7 @@
+src/
+tsconfig.json
+.github/
+.idea/
+.vscode/
+*.log
+*.tsbuildinfo

@@ -1,0 +1,50 @@
+{
+  "name": "rspress-plugin-ai-summary",
+  "version": "1.0.0",
+  "description": "Rspress plugin for displaying AI-generated article summaries",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc && mkdir -p dist/components && cp src/components/*.css dist/components/",
+    "prepack": "npm run build",
+    "test": "npm run build"
+  },
+  "keywords": [
+    "rspress",
+    "plugin",
+    "ai",
+    "summary",
+    "mdx"
+  ],
+  "author": "buyfakett",
+  "license": "MIT",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@10.11.1",
+  "bugs": "https://github.com/buyfakett/rspress-plugin-ai-summary/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/buyfakett/rspress-plugin-ai-summary"
+  },
+  "peerDependencies": {
+    "@rspress/core": "^2.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@rspress/core": "^2.0.22",
+    "@types/node": "^24.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.3"
+  }
+}

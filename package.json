@@ -1,6 +1,6 @@
 {
   "name": "rspress-plugin-ai-summary",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rspress plugin for displaying AI-generated article summaries",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

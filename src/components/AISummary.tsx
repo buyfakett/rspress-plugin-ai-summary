@@ -2,6 +2,7 @@ import {
     cloneElement,
     Fragment,
     isValidElement,
+    type PointerEvent as ReactPointerEvent,
     type ReactNode,
     useCallback,
     useEffect,
@@ -15,7 +16,6 @@ import {
 import { useLang } from '@rspress/core/runtime';
 import { FiChevronDown } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi2';
-import { BorderBeam } from './BorderBeam';
 import './AISummary.css';
 
 export interface AISummaryProps {
@@ -131,11 +131,23 @@ export function AISummary({children, title}: AISummaryProps) {
     const [canCollapse, setCanCollapse] = useState(false);
     const [hasReachedCollapseLimit, setHasReachedCollapseLimit] = useState(false);
     const [visibleLength, setVisibleLength] = useState(() => getTextLength(children));
-    const [hovered, setHovered] = useState(false);
     const totalLength = useMemo(() => getTextLength(children), [children]);
     const accessibleContent = useMemo(() => getTextContent(children), [children]);
     const isCollapsed = canCollapse && !expanded;
     const showToggle = canCollapse && (!isTyping || hasReachedCollapseLimit);
+
+    const handlePointerMove = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+        const bounds = event.currentTarget.getBoundingClientRect();
+
+        event.currentTarget.style.setProperty(
+            '--ai-summary-pointer-x',
+            `${event.clientX - bounds.left}px`,
+        );
+        event.currentTarget.style.setProperty(
+            '--ai-summary-pointer-y',
+            `${event.clientY - bounds.top}px`,
+        );
+    }, []);
 
     const measureContent = useCallback(() => {
         const contentElement = contentRef.current;
@@ -273,8 +285,7 @@ export function AISummary({children, title}: AISummaryProps) {
                 isTyping ? 'ai-summary--typing' : '',
                 isCollapsed ? 'ai-summary--collapsed' : '',
             ].filter(Boolean).join(' ')}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onPointerMove={handlePointerMove}
         >
             <span
                 ref={collapseMeasureRef}
@@ -330,7 +341,6 @@ export function AISummary({children, title}: AISummaryProps) {
                     )}
                 </div>
             </div>
-            {hovered && <BorderBeam size={2} duration={3} borderRadius={16}/>}
         </div>
     );
 }

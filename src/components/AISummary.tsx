@@ -126,6 +126,8 @@ export function AISummary({children, title}: AISummaryProps) {
     const summaryRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const collapseMeasureRef = useRef<HTMLSpanElement>(null);
+    const pointerFrameRef = useRef(0);
+    const pointerPositionRef = useRef({x: 0, y: 0});
     const [expanded, setExpanded] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const [canCollapse, setCanCollapse] = useState(false);
@@ -137,16 +139,36 @@ export function AISummary({children, title}: AISummaryProps) {
     const showToggle = canCollapse && (!isTyping || hasReachedCollapseLimit);
 
     const handlePointerMove = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
-        const bounds = event.currentTarget.getBoundingClientRect();
+        if (event.pointerType === 'touch') {
+            return;
+        }
 
-        event.currentTarget.style.setProperty(
-            '--ai-summary-pointer-x',
-            `${event.clientX - bounds.left}px`,
-        );
-        event.currentTarget.style.setProperty(
-            '--ai-summary-pointer-y',
-            `${event.clientY - bounds.top}px`,
-        );
+        const summaryElement = event.currentTarget;
+        pointerPositionRef.current = {x: event.clientX, y: event.clientY};
+
+        if (pointerFrameRef.current) {
+            return;
+        }
+
+        pointerFrameRef.current = window.requestAnimationFrame(() => {
+            pointerFrameRef.current = 0;
+            const bounds = summaryElement.getBoundingClientRect();
+            const {x, y} = pointerPositionRef.current;
+
+            summaryElement.style.setProperty(
+                '--ai-summary-pointer-x',
+                `${x - bounds.left}px`,
+            );
+            summaryElement.style.setProperty(
+                '--ai-summary-pointer-y',
+                `${y - bounds.top}px`,
+            );
+        });
+    }, []);
+
+    useEffect(() => () => {
+        window.cancelAnimationFrame(pointerFrameRef.current);
+        pointerFrameRef.current = 0;
     }, []);
 
     const measureContent = useCallback(() => {
@@ -304,7 +326,7 @@ export function AISummary({children, title}: AISummaryProps) {
                 </div>
                 <div className="ai-summary__body">
                     <div className="ai-summary__content-shell">
-                        {(isTyping || isCollapsed) && (
+                        {isTyping && (
                             <div className="ai-summary__screen-reader-content">
                                 {accessibleContent}
                             </div>
@@ -313,8 +335,8 @@ export function AISummary({children, title}: AISummaryProps) {
                             ref={contentRef}
                             id={contentId}
                             className="ai-summary__content"
-                            aria-hidden={isTyping || isCollapsed || undefined}
-                            inert={isTyping || isCollapsed || undefined}
+                            aria-hidden={isTyping || undefined}
+                            inert={isTyping || undefined}
                         >
                             {isTyping ? revealedContent : children}
                         </div>

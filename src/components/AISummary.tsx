@@ -16,12 +16,19 @@ import {
 import { useLang } from '@rspress/core/runtime';
 import { FiChevronDown } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi2';
+import { getFirstCharDelay, getTypingDuration } from '../animation';
+import type { AISummaryPluginOptions } from '../types';
 import './AISummary.css';
 
-export interface AISummaryProps {
+export interface AISummaryProps extends Pick<AISummaryPluginOptions, 'firstCharDelay'> {
     children: ReactNode;
     title?: string;
 }
+
+const pluginOptions: AISummaryPluginOptions =
+    typeof __RSPRESS_AI_SUMMARY_OPTIONS__ === 'undefined'
+    ? {}
+    : __RSPRESS_AI_SUMMARY_OPTIONS__;
 
 const summaryCopy = {
     zh: {
@@ -81,6 +88,11 @@ function revealText(
     cursorState: { inserted: boolean },
 ): ReactNode {
     if (budget.remaining <= 0) {
+        if (!cursorState.inserted) {
+            cursorState.inserted = true;
+            return cursor;
+        }
+
         return null;
     }
 
@@ -118,7 +130,7 @@ function revealText(
     return node;
 }
 
-export function AISummary({children, title}: AISummaryProps) {
+export function AISummary({children, title, firstCharDelay}: AISummaryProps) {
     const locale = useLang()?.toLowerCase().startsWith('en') ? 'en' : 'zh';
     const copy = summaryCopy[locale];
     const resolvedTitle = title || copy.title;
@@ -135,6 +147,7 @@ export function AISummary({children, title}: AISummaryProps) {
     const [visibleLength, setVisibleLength] = useState(() => getTextLength(children));
     const totalLength = useMemo(() => getTextLength(children), [children]);
     const accessibleContent = useMemo(() => getTextContent(children), [children]);
+    const resolvedFirstCharDelay = firstCharDelay ?? pluginOptions.firstCharDelay;
     const isCollapsed = canCollapse && !expanded;
     const showToggle = canCollapse && (!isTyping || hasReachedCollapseLimit);
 
@@ -241,15 +254,23 @@ export function AISummary({children, title}: AISummaryProps) {
         let observer: IntersectionObserver | undefined;
 
         const startTyping = () => {
-            const duration = Math.min(5000, Math.max(1400, totalLength * 10));
-            const startedAt = performance.now();
+            const duration = getTypingDuration(totalLength);
+            const startedAt = performance.now()
+                + getFirstCharDelay(resolvedFirstCharDelay, totalLength);
 
             setVisibleLength(0);
             setHasReachedCollapseLimit(false);
             setIsTyping(true);
 
             const animate = (timestamp: number) => {
-                const progress = Math.min(1, (timestamp - startedAt) / duration);
+                const rawProgress = (timestamp - startedAt) / duration;
+                if (rawProgress <= 0) {
+                    setVisibleLength(0);
+                    animationFrame = window.requestAnimationFrame(animate);
+                    return;
+                }
+
+                const progress = Math.min(1, rawProgress);
                 const easedProgress = 1 - Math.pow(1 - progress, 1.8);
 
                 setVisibleLength(Math.max(1, Math.round(totalLength * easedProgress)));
@@ -287,7 +308,7 @@ export function AISummary({children, title}: AISummaryProps) {
             observer?.disconnect();
             window.cancelAnimationFrame(animationFrame);
         };
-    }, [totalLength]);
+    }, [resolvedFirstCharDelay, totalLength]);
 
     const revealedContent = useMemo(() => {
         const budget = {remaining: visibleLength};

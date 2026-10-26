@@ -23,6 +23,21 @@ export default defineConfig({
 });
 ```
 
+首字生成等待默认开启，并会随摘要字数轻微增加。可以通过插件选项调整：
+
+```typescript
+pluginAISummary({
+    // 固定等待 800ms 后显示第一个字
+    firstCharDelay: 800,
+});
+```
+
+`firstCharDelay` 支持以下取值：
+
+- `true`（默认）：根据摘要字数自动计算首字等待时间。
+- `number`：固定首字等待时间，单位为毫秒。
+- `false`：关闭首字等待，立即开始逐字显示。
+
 ## 使用
 
 注册插件后，可以在任意 `.mdx` 页面中直接使用全局组件，无需单独导入：
@@ -42,6 +57,14 @@ export default defineConfig({
 
 ```mdx
 <AISummary title="本页摘要">
+    摘要内容。
+</AISummary>
+```
+
+也可以在单个组件上覆盖插件配置：
+
+```mdx
+<AISummary firstCharDelay={1200}>
     摘要内容。
 </AISummary>
 ```

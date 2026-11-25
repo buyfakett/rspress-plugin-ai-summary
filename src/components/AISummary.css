@@ -1,10 +1,11 @@
 .ai-summary {
-    --ai-summary-accent-start: #9d5be9;
-    --ai-summary-accent-end: #4c7ae9;
-    --ai-summary-highlight: #25bfc3;
-    --ai-summary-surface: #fff;
-    --ai-summary-border: rgba(157, 91, 233, 0.08);
-    --ai-summary-text: #485364;
+    --ai-summary-accent-start: var(--rp-c-link);
+    --ai-summary-accent-end: var(--rp-c-brand-dark);
+    --ai-summary-highlight: var(--rp-c-brand-light);
+    --ai-summary-surface: var(--rp-c-bg);
+    --ai-summary-border: var(--rp-c-divider-light);
+    --ai-summary-text: var(--rp-c-text-1);
+    --ai-summary-gloss: var(--rp-c-bg-alt);
     --ai-summary-pointer-x: 50%;
     --ai-summary-pointer-y: 50%;
     --ai-summary-collapse-height: 8.1rem;
@@ -21,11 +22,10 @@
     border: 1px solid var(--ai-summary-border);
     border-radius: var(--ai-summary-radius);
     border-color: var(--ai-summary-border);
-    background: radial-gradient(circle at 0 0, rgba(157, 91, 233, 0.04), transparent 44%),
-    radial-gradient(circle at 100% 100%, rgba(76, 122, 233, 0.03), transparent 44%),
+    background: radial-gradient(circle at 0 0, color-mix(in srgb, var(--ai-summary-accent-start) 4%, transparent), transparent 44%),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--ai-summary-accent-end) 3%, transparent), transparent 44%),
     var(--ai-summary-surface);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08),
-    0 4px 12px rgba(15, 23, 42, 0.04);
+    box-shadow: var(--rp-shadow-1);
     backdrop-filter: blur(18px) saturate(145%);
     -webkit-backdrop-filter: blur(18px) saturate(145%);
     transition: border-color 180ms ease,
@@ -47,7 +47,7 @@
     border-radius: inherit;
     background: radial-gradient(
             circle 42px at var(--ai-summary-pointer-x) var(--ai-summary-pointer-y),
-            rgba(255, 255, 255, 0.3) 0%,
+            color-mix(in srgb, var(--ai-summary-gloss) 30%, transparent) 0%,
             transparent 76%
     ),
     radial-gradient(
@@ -71,7 +71,7 @@
     border-radius: inherit;
     background: radial-gradient(
             circle 180px at var(--ai-summary-pointer-x) var(--ai-summary-pointer-y),
-            rgba(255, 255, 255, 0.9) 0%,
+            color-mix(in srgb, var(--ai-summary-gloss) 90%, transparent) 0%,
             color-mix(in srgb, var(--ai-summary-highlight) 76%, transparent) 22%,
             color-mix(in srgb, var(--ai-summary-accent-start) 70%, transparent) 48%,
             transparent 75%
@@ -89,17 +89,19 @@
 }
 
 .ai-summary:hover {
-    border-color: rgba(157, 91, 233, 0.18);
-    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08),
-    0 10px 28px rgba(76, 122, 233, 0.09),
-    0 0 0 1px rgba(37, 191, 195, 0.025);
+    border-color: var(--rp-c-divider);
+    box-shadow: var(--rp-shadow-2);
 }
 
 .ai-summary:focus-within::after {
     opacity: 0.5;
 }
 
-html.dark .ai-summary {
+html:is(.dark, .rp-dark) .ai-summary {
+    --ai-summary-accent-start: #9d5be9;
+    --ai-summary-accent-end: #4c7ae9;
+    --ai-summary-highlight: #25bfc3;
+    --ai-summary-gloss: white;
     --ai-summary-surface: rgba(20, 24, 33, 0.88);
     --ai-summary-border: rgba(157, 91, 233, 0.18);
     --ai-summary-text: var(--rp-c-text-1);
@@ -110,7 +112,7 @@ html.dark .ai-summary {
     0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-html.dark .ai-summary:hover {
+html:is(.dark, .rp-dark) .ai-summary:hover {
     border-color: rgba(157, 91, 233, 0.3);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.34),
     0 10px 24px rgba(0, 0, 0, 0.24);
@@ -145,7 +147,7 @@ html.dark .ai-summary:hover {
     color-mix(in srgb, var(--ai-summary-surface) 72%, transparent);
     color: var(--ai-summary-accent-start);
     font-size: 15px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 28%, transparent),
     0 4px 12px color-mix(in srgb, var(--ai-summary-accent-start) 9%, transparent);
     transition: border-color 220ms ease,
     box-shadow 220ms ease,
@@ -213,7 +215,7 @@ html.dark .ai-summary:hover {
     font-weight: 600;
     line-height: 1.5;
     white-space: nowrap;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 18%, transparent);
 }
 
 .ai-summary__badge::before {
@@ -343,13 +345,13 @@ html.dark .ai-summary:hover {
     margin-left: 0.34rem;
     border-radius: 50%;
     background: var(--ai-summary-accent-start);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.56),
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ai-summary-gloss) 56%, transparent),
     0 0 9px color-mix(in srgb, var(--ai-summary-accent-end) 32%, transparent);
     vertical-align: 0.05em;
     animation: ai-summary-dot-blink 1.15s ease-in-out infinite;
 }
 
-html.dark .ai-summary__cursor {
+html:is(.dark, .rp-dark) .ai-summary__cursor {
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5),
     0 0 10px rgba(0, 0, 0, 0.68);
 }
@@ -379,8 +381,8 @@ html.dark .ai-summary__cursor {
     font-weight: 600;
     line-height: 1;
     cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 4px 12px rgba(15, 23, 42, 0.05);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 20%, transparent),
+    var(--rp-shadow-1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: color 180ms ease,
@@ -394,7 +396,7 @@ html.dark .ai-summary__cursor {
     border-color: color-mix(in srgb, var(--ai-summary-accent-start) 34%, var(--ai-summary-border));
     background: color-mix(in srgb, var(--ai-summary-accent-start) 7%, var(--ai-summary-surface));
     color: var(--ai-summary-accent-start);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 28%, transparent),
     0 6px 16px color-mix(in srgb, var(--ai-summary-accent-end) 10%, transparent);
     transform: translateY(-1px);
 }
@@ -412,14 +414,14 @@ html.dark .ai-summary__cursor {
     transform: rotate(180deg);
 }
 
-html.dark .ai-summary__toggle {
+html:is(.dark, .rp-dark) .ai-summary__toggle {
     border-color: rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
-html.dark .ai-summary__toggle:hover {
+html:is(.dark, .rp-dark) .ai-summary__toggle:hover {
     border-color: color-mix(
             in srgb,
             rgba(255, 255, 255, 0.14) 62%,
@@ -444,12 +446,12 @@ html.dark .ai-summary__toggle:hover {
 @keyframes ai-summary-icon-pulse {
     0%,
     100% {
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 28%, transparent),
         0 4px 12px color-mix(in srgb, var(--ai-summary-accent-start) 9%, transparent);
     }
 
     50% {
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34),
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 34%, transparent),
         0 5px 16px color-mix(in srgb, var(--ai-summary-accent-end) 18%, transparent);
     }
 }
@@ -482,7 +484,7 @@ html.dark .ai-summary__toggle:hover {
                 var(--ai-summary-highlight) 36%,
                 var(--ai-summary-accent-start)
         );
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34),
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ai-summary-gloss) 34%, transparent),
         0 7px 18px color-mix(in srgb, var(--ai-summary-accent-end) 17%, transparent);
         transform: rotate(-5deg) scale(1.06);
     }
